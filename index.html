@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Prueba CORS</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.7.2/angular.min.js"></script>
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+</head>
+<body>
+
+    
+   
+    <div ng-app="app" ng-controller="webApiController" class="container">
+            <div class="col-md-10">
+                    <h1 class="text-info">Listado de Estudiantes</h1>
+
+                    <button class="btn btn-default">
+                            <a href="store2.html">Agregar Nuevo</a>
+                    </button>
+                    <hr>
+
+                    <table class="table table-hover table-bordered" >
+                        <thead >
+                            <tr class="info bg-info">
+                                <th>id</th>
+                                <th>
+                                    Nombre
+                                </th>
+                                <th>
+                                    Apellidos
+                                </th>
+                                <th>
+                                    Edad
+                                </th>
+                                <th>
+                                    Institucion
+                                </th>
+                                <th>
+                                    Acciones
+                                </th>
+
+                            </tr>
+                        </thead>
+            
+                        <tbody>
+                            <tr data-ng-repeat="estudiante in lista">
+                                <td>
+                                    {{estudiante.id}}
+                                </td>
+                                <td >
+                                    {{estudiante.nombre}}
+                                </td>
+                                <td>
+                                    {{estudiante.apellidos}}
+                                </td>
+                                <td>
+                                    {{estudiante.edad}}
+                                </td>
+                                <td>
+                                    {{estudiante.institucion}}
+                                </td>
+                                <td class="text-center">
+                                    <button class="btn btn-danger btn-sm" ng-click="eliminar(estudiante.id)" title="Eliminar"><i class="glyphicon glyphicon-trash"></i></button>
+                                    <button class="btn btn-secondary btn-sm" 
+                                                ng-click="cargarid(estudiante.id)" 
+                                                title="Editar"
+                                                data-toggle="modal" data-target="#myModal"
+                                                
+                                                >
+                                                <i class="glyphicon glyphicon-edit"></i>
+                                        </button>
+                                </td>
+                                
+                            </tr>
+                        </tbody>
+
+                        
+                    </table>
+                    
+                    
+                </div>
+            <!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+      
+          <!-- Modal content-->
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <h4 class="modal-title">Modal Header</h4>
+            </div>
+            <div class="modal-body">
+                  <div >
+                          <h2>Formulario de registro</h2>
+                                <div class="form-group">
+                                    <input type="hidden"  placeholder="Nombre" class="form-control" ng-model="Id" > 
+                                </div>
+                              
+                              <div class="form-group">
+                                  <input type="text"  placeholder="Nombre" class="form-control" ng-model="Nombre"> 
+                              </div>
+                              <div class="form-group">
+                                  <input type="text"  placeholder="Apellidos" class="form-control" ng-model="Apellidos"> 
+                              </div>
+                              <div class="form-group">
+                                  <input type="number"  placeholder="Edad" class="form-control" ng-model="Edad"> 
+                              </div>
+                              <div class="form-group">
+                                      <input type="text"  placeholder="Institucion" class="form-control" ng-model="Institucion"> 
+                                  </div>
+                              <div class="form-group">
+                                      
+                                  <input  ng-click="Actualizar()" type="button"  value="Guardar" class="btn btn-info" > 
+                              </div>
+                          </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+      
+        </div>
+      </div>
+    </div>
+    
+
+
+
+    <script>
+        var app = angular.module("app",[]);
+
+        app.controller("webApiController", function($scope, $http){
+
+            $scope.cargar= function(){
+            //realizando la peticion al servicio web
+            $http.get("http://localhost:9000/prueba").then(
+            function success(response){
+            //en caso de exito
+            $scope.datos= response.data; //.data para acceder a toda la imformacion del response
+            $scope.lista = response.data;
+            }, 
+            function error(){
+            alert("error en la peticion")
+            });
+        }
+
+        $scope.cargar();
+
+        // Eliminar
+        $scope.eliminar= function(id) {
+            alert("¿Eliminar Registro: "+ id +"?");
+
+
+            $http.delete("http://localhost:9000/prueba/"+id).then( 
+                function success(response){
+                    alert("Eliminando");
+                    $scope.cargar();              
+                }, 
+
+
+                function error(response){
+                    alert("No Eliminado");
+                });
+        }
+
+        //Editar!
+
+         $scope.cargarid= function(id){
+            
+            $http.get("http://localhost:9000/prueba/"+id).then( 
+                function success(response){ 
+                    $scope.Id=response.data.id,
+                   $scope.Nombre = response.data.nombre;
+                   $scope.Apellidos = response.data.apellidos;
+                   $scope.Edad = response.data.edad;
+                   $scope.Institucion = response.data.institucion;
+                   
+
+                }, 
+                function error(response){
+                    alert("Error al cargar los datos del Estudiante");
+                });
+
+        }
+
+         $scope.Actualizar = function(){
+           
+            
+           var data={
+                nombre: $scope.Nombre,
+                apellidos: $scope.Apellidos,
+                edad: $scope.Edad,
+                institucion: $scope.Institucion
+            }
+
+            
+            //ejecutar la peticion
+            // JSON.stringify se usa para asegurarse que los datos vayan en formato Json
+
+            $http.put("http://localhost:9000/prueba/"+$scope.Id,JSON.stringify(data)).then( 
+                function success(response){
+
+                    alert("Registro Actualizado");
+                    $scope.cargar();
+                }, 
+
+
+                function error(response){
+                    alert("No Modificado");
+                });
+        }
+
+        });
+    </script>
+
+
+
+    <script>
+        $(document).ready(iniciar);
+        function iniciar(){
+            $.ajax({
+                method: "GET",
+                DataType: "json",
+                url: "http://localhost:9000/prueba",
+                success: procesar,
+                error: error
+            })
+        }
+
+        function procesar(response){
+            $("#datos").html(JSON.stringify(response));
+            //$("#datos").html((response[0].nombre)); si se quiere renderizar solo un elemento del arreglo que devuelve
+
+        }
+        function error(){
+            alert("no hay respuesta");
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.7.2/angular.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <!-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"> -->
+
+</head>
+<body>
+
+        <div ng-app="app" ng-controller="webApiController" class="container">
+
+                <div class="row">
+                    <div class="col-md-5">
+                            <div >
+                                <h2>Formulario de registro</h2>
+                                    
+                                    
+                                    <div class="form-group">
+                                        <input type="text"  placeholder="Nombre" class="form-control" ng-model="Nombre"> 
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="text"  placeholder="Apellidos" class="form-control" ng-model="Apellidos"> 
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="number"  placeholder="Edad" class="form-control" ng-model="Edad"> 
+                                    </div>
+                                    <div class="form-group">
+                                            <input type="text"  placeholder="Institucion" class="form-control" ng-model="Institucion"> 
+                                        </div>
+                                    <div class="form-group">
+                                            
+                                        <input  ng-click="guardar()" type="button"  value="Guardar" class="btn btn-info" > 
+                                    </div>
+                                </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button class="btn btn-dafault">
+            <a href="index.html">Volver al listado</a>
+        </button>
+
+    <script>
+       var app = angular.module("app",[]); 
+       
+       app.controller("webApiController", function($scope, $http){  
+
+           $scope.reset=function(){
+               $scope.Nombre = null;
+               $scope.Apellidos= null;
+               $scope.Edad = null;
+               $scope.Institucion= null;
+           } 
+
+           $scope.guardar=function() {
+               var data ={
+                   nombre: $scope.Nombre,
+                   apellidos: $scope.Apellidos,
+                   edad: $scope.Edad,
+                   institucion: $scope.Institucion
+               }
+               $http.post("http://localhost:9000/prueba",JSON.stringify(data)).then( 
+                function success(response){
+                    alert("Registro Guardado");
+                    $scope.reset();
+
+                }, 
+
+
+                function error(response){
+                    alert("No Procesado");
+                });
+               
+            
+            }
+
+
+
+       });
+
+
+    </script>
+</body>
+</html>
